@@ -1,0 +1,519 @@
+{
+  "lastUpdated": "2026-05-11T01:00:00.000Z",
+  "pipeline": [
+    {
+      "ventureName": "AI Automation Services (Freelance + Retainer)",
+      "slug": "ai-automation-services",
+      "status": "active",
+      "priority": "high",
+      "score": {
+        "speedToRevenue": 10,
+        "startupEfficiency": 10,
+        "marginPotential": 9,
+        "automationPotential": 9,
+        "competitionAdvantage": 8,
+        "total": 46
+      },
+      "overview": {
+        "summary": "Offer AI automation consulting and implementation services to small businesses, starting with freelance gigs and transitioning to monthly retainers.",
+        "problemSolved": "Small businesses waste 10-20 hours/week on repetitive tasks like email responses, data entry, social media, customer support, and reporting.",
+        "targetCustomer": "Small businesses (5-50 employees) in Netherlands/EU - e-commerce, professional services, local retailers",
+        "valueProposition": "Save 10-20 hours/week by automating repetitive tasks with AI workflows, n8n automations, and smart integrations.",
+        "whyNow": "AI tools have matured (2024-2026), small businesses are overwhelmed but lack expertise, competition still low in EU market"
+      },
+      "financials": {
+        "startupCost": 19,
+        "monthlyOverhead": 25,
+        "grossMarginPercent": 85,
+        "pricingModel": "€150-300/hour or €500-1500/month retainer",
+        "month1Revenue": 1500,
+        "month3Revenue": 4000,
+        "month6Revenue": 6500,
+        "month12Revenue": 10000,
+        "estimatedMonthlyProfit": 8500
+      },
+      "executionPlan": {
+        "week1": [
+          "Create Upwork/Fiverr profiles (€0)",
+          "Build portfolio with 3 case studies using Chad Inc work",
+          "Set up Carrd.co landing page (€19/year)",
+          "Send 20 personalized proposals to posted jobs",
+          "Goal: Land 1-2 small gigs (€200-500 each)"
+        ],
+        "week2to4": [
+          "Deliver first projects with exceptional quality",
+          "Request testimonials and case study permission",
+          "Pitch retainer model to satisfied clients (€500-1500/month)",
+          "Build n8n templates for common use cases",
+          "Goal: Convert 1 client to retainer, complete 3-4 projects"
+        ],
+        "month2to3": [
+          "Create productized service packages (Starter/Pro/Enterprise)",
+          "Build demo library of common automations",
+          "Raise rates for new clients (€75-150/hour or €1500-3000/project)",
+          "Hire VA for lead gen (5 hours/week)",
+          "Goal: 3-4 retainer clients, €3K-5K MRR"
+        ],
+        "month4to12": [
+          "Systematize delivery with SOPs and templates",
+          "Launch self-service audit product (€97)",
+          "Partner with agencies for white-label work",
+          "Build team of 2-3 freelance automation specialists",
+          "Goal: €8K-10K MRR, 80%+ margins"
+        ]
+      },
+      "operations": {
+        "toolsRequired": ["n8n (self-hosted, free)", "Make.com (free tier)", "Carrd.co (€19/year)", "Calendly (free)", "Notion (free)", "Stripe/PayPal"],
+        "automationStack": ["n8n for client workflows", "Calendly for scheduling", "Notion templates for proposals", "Gmail templates for outreach"],
+        "skillsNeeded": ["n8n/Make automation", "API integrations", "Client communication", "Process mapping"],
+        "weeklyTimeRequirement": "10-20 hours (weeks 1-4), 15-25 hours (months 2-3), 10-15 hours (months 4-12 with team)",
+        "outsourcingOpportunities": ["Lead generation VA (€5-10/hour)", "Template building (€20-40/template)", "Client onboarding (€15-25/hour)"]
+      },
+      "automation": {
+        "immediateAutomation": ["Proposal generation with AI", "Contract templates", "Invoice automation", "Client onboarding workflows"],
+        "aiAssistOpportunities": ["Discovery call notes transcription", "Workflow documentation", "Progress reports", "Email responses"],
+        "fullyAutonomousPotential": ["Initial client qualification", "Template delivery", "Monthly reporting dashboards", "Payment reminders"]
+      },
+      "risks": {
+        "primary": ["Client acquisition takes longer than expected", "Scope creep on fixed-price projects", "Payment delays from B2B clients", "Burnout from custom work vs productized"],
+        "mitigation": ["Start with clear scope templates and change order process", "Require 50% upfront for all projects", "Build reusable templates to reduce custom work", "Focus on retainer model ASAP for predictable income"]
+      },
+      "competition": {
+        "competitors": ["Local web dev agencies (slow, expensive)", "Upwork freelancers (inconsistent quality)", "Zapier experts (limited to Zapier)", "Big automation consultancies (€5K+ minimum)"],
+        "marketGaps": ["No EU-focused AI automation specialists", "Most competitors don't offer retainers", "Lack of finance/compliance automation expertise", "No productized service options"],
+        "positioningEdge": "CA background creates trust with finance/audit clients, EU timezone, productized packages, transparent pricing"
+      },
+      "validationSignals": [
+        "r/automation has 50K+ members, daily posts seeking help",
+        "Upwork shows 500+ active 'n8n automation' jobs",
+        "IndieHackers: multiple automation agencies at €5K-20K MRR",
+        "Google Trends: 'n8n' +340% growth 2024-2026",
+        "Pain point: 'I waste hours on repetitive tasks' - universal SMB complaint"
+      ],
+      "strategicFit": {
+        "alignmentScore": 10,
+        "synergies": ["Uses Chad's own n8n workflows", "Leverages finance/audit expertise for compliance automations", "Builds case studies for other ventures"],
+        "crossSellingOpportunities": ["Digital products (templates)", "Greenify B2B integrations", "Newsletter content", "AI agent services"]
+      },
+      "launchReadiness": {
+        "canLaunchWithin7Days": true,
+        "difficulty": "low"
+      }
+    },
+    {
+      "ventureName": "Digital Products (Notion Templates + AI Prompts)",
+      "slug": "digital-products-notion-ai",
+      "status": "active",
+      "priority": "high",
+      "score": {
+        "speedToRevenue": 8,
+        "startupEfficiency": 10,
+        "marginPotential": 10,
+        "automationPotential": 10,
+        "competitionAdvantage": 6,
+        "total": 44
+      },
+      "overview": {
+        "summary": "Create and sell digital templates: Notion systems for productivity, AI prompt libraries for specific use cases (marketing, content, business).",
+        "problemSolved": "Solopreneurs and small businesses waste 10+ hours building systems from scratch when they could buy proven frameworks.",
+        "targetCustomer": "Solopreneurs, content creators, small business owners, productivity enthusiasts",
+        "valueProposition": "Done-for-you systems that save 10+ hours of setup time. Proven frameworks, not theory.",
+        "whyNow": "Notion has 30M+ users, AI prompt market exploding, Gumroad/Lemon Squeezy make selling frictionless"
+      },
+      "financials": {
+        "startupCost": 30,
+        "monthlyOverhead": 0,
+        "grossMarginPercent": 95,
+        "pricingModel": "€29-49 per template, €79-149 bundles, €197-297 premium systems",
+        "month1Revenue": 600,
+        "month3Revenue": 1500,
+        "month6Revenue": 3000,
+        "month12Revenue": 6000,
+        "estimatedMonthlyProfit": 5700
+      },
+      "executionPlan": {
+        "week1": [
+          "Choose 1-2 niches (e.g., 'Content Creator OS', 'Freelancer CRM')",
+          "Build Notion template with 10+ linked databases",
+          "Create AI prompt library (50+ prompts, categorized)",
+          "Design cover images with Canva (free)",
+          "Write sales page copy"
+        ],
+        "week2to4": [
+          "Set up Gumroad/Lemon Squeezy (free, 5-10% fee)",
+          "Price at €29-49 (early bird €19)",
+          "Post on Reddit (r/Notion, r/Entrepreneur), Twitter, IndieHackers",
+          "Reach out to 10 micro-influencers for affiliate (30% commission)",
+          "Goal: 10-20 sales in first week"
+        ],
+        "month2to3": [
+          "Create 2-3 more products in adjacent niches",
+          "Build email list with free mini-template lead magnet",
+          "Set up automated email sequence (ConvertKit free tier)",
+          "Run limited-time bundles (3 products for €79)",
+          "Goal: €500-1000/month passive revenue"
+        ],
+        "month4to12": [
+          "Launch membership tier (€19/month for template library)",
+          "Create video courses for top products (€97-197)",
+          "Build affiliate network (50+ affiliates)",
+          "Explore B2B licensing (€500-2000/year)",
+          "Goal: €4K-6K/month, 95% margins"
+        ]
+      },
+      "operations": {
+        "toolsRequired": ["Notion (free)", "Canva (free)", "Gumroad/Lemon Squeezy (free)", "ConvertKit (free <1000 subs)", "Loom (free)"],
+        "automationStack": ["Gumroad auto-delivery", "ConvertKit email sequences", "Social media scheduling", "Affiliate tracking"],
+        "skillsNeeded": ["Notion system design", "Copywriting", "Basic design", "Marketing"],
+        "weeklyTimeRequirement": "15-20 hours (weeks 1-4), 5-10 hours (months 2-3), 3-5 hours (months 4-12)",
+        "outsourcingOpportunities": ["Cover design (€20-50/template)", "Video editing (€30-60/video)", "Social media posts (€100-300/month)"]
+      },
+      "automation": {
+        "immediateAutomation": ["Product delivery", "Email sequences", "Affiliate commissions", "Customer support templates"],
+        "aiAssistOpportunities": ["Copywriting", "Social media posts", "Email responses", "Product descriptions"],
+        "fullyAutonomousPotential": ["Entire sales funnel", "Customer onboarding", "Update delivery", "Review collection"]
+      },
+      "risks": {
+        "primary": ["Market saturation - many Notion templates exist", "Piracy - templates get shared for free", "Platform dependency - Gumroad/Notion changes", "One-time purchases vs recurring revenue"],
+        "mitigation": ["Focus on specific niches, not generic 'productivity'", "Include video tutorials + updates (harder to pirate)", "Build email list for direct customer relationship", "Add membership tier for ongoing templates/updates"]
+      },
+      "competition": {
+        "competitors": ["Thomas Frank (Notion templates, €29-99)", "Red Gregory (templates + courses, €49-197)", "Easlo (minimalist templates, €19-39)", "Hundreds of small sellers on Gumroad"],
+        "marketGaps": ["Few templates for EU/finance professionals", "Limited AI prompt + Notion combos", "Most templates lack video tutorials", "No Chad Inc branding/authority"],
+        "positioningEdge": "Finance/audit professional templates, AI prompt integration, Chad Inc brand, detailed video tutorials"
+      },
+      "validationSignals": [
+        "r/Notion has 400K+ members, daily template requests",
+        "Gumroad top sellers make €10K-50K/month on templates",
+        "Twitter #Notion hashtag: 1M+ posts",
+        "Notion template marketplace: €29-99 average price point",
+        "Pain point: 'I need a system but don't want to build from scratch'"
+      ],
+      "strategicFit": {
+        "alignmentScore": 9,
+        "synergies": ["Uses Chad's own Notion systems", "Content for newsletter", "Case studies for automation services", "Cross-sell to service clients"],
+        "crossSellingOpportunities": ["Automation services upsell", "Newsletter sponsorship", "AI agent services", "B2B licensing"]
+      },
+      "launchReadiness": {
+        "canLaunchWithin7Days": true,
+        "difficulty": "low"
+      }
+    },
+    {
+      "ventureName": "YouTube Automation (Faceless AI Channels)",
+      "slug": "youtube-automation-faceless",
+      "status": "backlog",
+      "priority": "medium",
+      "score": {
+        "speedToRevenue": 5,
+        "startupEfficiency": 7,
+        "marginPotential": 9,
+        "automationPotential": 9,
+        "competitionAdvantage": 6,
+        "total": 36
+      },
+      "overview": {
+        "summary": "Build faceless YouTube channels using AI for scripts, voiceovers, and editing. Monetize via AdSense + affiliate + sponsorships.",
+        "problemSolved": "People want YouTube income but don't want to be on camera or spend 40 hours/week editing.",
+        "targetCustomer": "Evergreen niches: personal finance, health, tech reviews, motivation, true crime, history",
+        "valueProposition": "Scalable content machine - 1 video/week per channel, fully automated production",
+        "whyNow": "AI video tools matured (2024-2026), YouTube Shorts exploding, CPM rates increasing in finance niche"
+      },
+      "financials": {
+        "startupCost": 100,
+        "monthlyOverhead": 50,
+        "grossMarginPercent": 85,
+        "pricingModel": "AdSense (€2-15 CPM), affiliate (5-30% commission), sponsorships (€500-2000/video at 10K subs)",
+        "month1Revenue": 0,
+        "month3Revenue": 200,
+        "month6Revenue": 1500,
+        "month12Revenue": 8000,
+        "estimatedMonthlyProfit": 6800
+      },
+      "executionPlan": {
+        "week1": [
+          "Choose 1 niche with high CPM (>€10) and low competition",
+          "Set up channel branding (logo, banner, trailer)",
+          "Create AI workflow: ChatGPT (script) → ElevenLabs (voice) → CapCut/Premiere (edit)",
+          "Publish 4 videos (1/week), optimize titles/thumbnails",
+          "Budget: €100 for AI tools"
+        ],
+        "week2to4": [
+          "Analyze top performers, double down on winning formats",
+          "Apply for YouTube Partner Program (1000 subs + 4000 watch hours)",
+          "Add affiliate links in descriptions (Amazon, course referrals)",
+          "Increase to 2 videos/week per channel",
+          "Goal: Reach monetization threshold"
+        ],
+        "month2to3": [
+          "Launch 2nd channel in adjacent niche",
+          "Build content calendar 3 months ahead",
+          "Pitch sponsorships at 10K+ subs (€500-2000/video)",
+          "Hire VA for thumbnail design + upload (€5-10/video)",
+          "Goal: 2 channels, €2K-3K/month combined"
+        ],
+        "month4to12": [
+          "Scale to 5 channels across niches",
+          "Build team: scriptwriter, editor, thumbnail designer",
+          "Launch membership/community for superfans",
+          "Create course: 'How I Built 5 Automated YouTube Channels' (€197-497)",
+          "Goal: 5 channels, €6K-10K/month combined"
+        ]
+      },
+      "operations": {
+        "toolsRequired": ["ChatGPT Plus (€20/mo)", "ElevenLabs (€22/mo)", "CapCut or Premiere Pro (€0-25/mo)", "Canva Pro (€12/mo)", "TubeBuddy/vidIQ (€0-15/mo)"],
+        "automationStack": ["ChatGPT for scripts", "ElevenLabs for voiceover", "CapCut templates for editing", "Buffer for social promotion"],
+        "skillsNeeded": ["Scriptwriting", "Video editing basics", "SEO/thumbnail optimization", "Niche research"],
+        "weeklyTimeRequirement": "15-20 hours (weeks 1-4), 10-15 hours (months 2-3), 5-10 hours (months 4-12 with team)",
+        "outsourcingOpportunities": ["Scriptwriting (€20-40/script)", "Video editing (€30-60/video)", "Thumbnail design (€5-15/thumb)", "Channel management (€200-500/month/channel)"]
+      },
+      "automation": {
+        "immediateAutomation": ["Script generation", "Voiceover synthesis", "Basic editing templates", "Upload scheduling"],
+        "aiAssistOpportunities": ["Title/thumbnail A/B testing", "Comment responses", "Analytics insights", "Trend research"],
+        "fullyAutonomousPotential": ["Entire production pipeline", "Multi-channel management", "Affiliate link insertion", "Revenue tracking"]
+      },
+      "risks": {
+        "primary": ["YouTube algorithm changes affect reach", "AI voice detection + demonetization", "Copyright strikes from stock footage/music", "Burnout from content grind before monetization"],
+        "mitigation": ["Diversify across multiple channels/niches", "Use human-like voices, add music/SFX to mask AI", "Use royalty-free sources only (Pexels, Epidemic Sound)", "Set realistic timeline - 6 months to meaningful revenue"]
+      },
+      "competition": {
+        "competitors": ["Finance YouTube channels (Graham Stephan, Andrei Jikh - high production)", "Faceless channels (MagnatesMedia, Alux - established)", "AI automation courses (€97-497)", "Thousands of small faceless channels"],
+        "marketGaps": ["Few EU-focused finance channels", "Limited AI transparency (most hide AI use)", "No Chad Inc authority/brand", "Opportunity in micro-niches (€100-500/mo affiliate potential)"],
+        "positioningEdge": "Finance professional credibility, EU perspective, transparent AI use, automation expertise"
+      },
+      "validationSignals": [
+        "r/Youtube has 2M+ members, daily automation questions",
+        "IndieHackers: multiple creators at €5K-20K/month faceless",
+        "YouTube: 'make money online' = 500M+ views",
+        "CPM rates: Finance €10-25, Health €8-15, Tech €5-12",
+        "Pain point: 'I want YouTube income but hate being on camera'"
+      ],
+      "strategicFit": {
+        "alignmentScore": 7,
+        "synergies": ["Content for other ventures", "AI workflow testing ground", "Brand building", "Affiliate revenue diversification"],
+        "crossSellingOpportunities": ["Automation services", "Digital products", "Newsletter growth", "Sponsorship network"]
+      },
+      "launchReadiness": {
+        "canLaunchWithin7Days": true,
+        "difficulty": "medium"
+      }
+    },
+    {
+      "ventureName": "Substack Newsletter (Paid Subscription)",
+      "slug": "substack-newsletter-ai-business",
+      "status": "backlog",
+      "priority": "medium",
+      "score": {
+        "speedToRevenue": 5,
+        "startupEfficiency": 10,
+        "marginPotential": 9,
+        "automationPotential": 7,
+        "competitionAdvantage": 6,
+        "total": 37
+      },
+      "overview": {
+        "summary": "Weekly newsletter on AI tools, automation workflows, and online business strategies. Free tier builds audience, paid tier offers deep-dive guides + templates.",
+        "problemSolved": "Solopreneurs are overwhelmed by AI tools and need curated, actionable strategies - not hype.",
+        "targetCustomer": "Solopreneurs, freelancers, small business owners interested in AI/automation",
+        "valueProposition": "Actionable AI strategies, not hype. Weekly workflows you can implement in <1 hour.",
+        "whyNow": "AI explosion creates information overload, Substack has 1M+ paid subscribers platform-wide, newsletter fatigue creates opportunity for quality"
+      },
+      "financials": {
+        "startupCost": 0,
+        "monthlyOverhead": 0,
+        "grossMarginPercent": 95,
+        "pricingModel": "Free + Paid (€5-10/month or €50-100/year), Sponsorships (€500-1000/email at 1K subs)",
+        "month1Revenue": 0,
+        "month3Revenue": 300,
+        "month6Revenue": 2000,
+        "month12Revenue": 8000,
+        "estimatedMonthlyProfit": 7600
+      },
+      "executionPlan": {
+        "week1": [
+          "Set up Substack (free) with compelling about page",
+          "Write 3 pillar posts (evergreen content)",
+          "Launch with 1 free post/week for 4 weeks",
+          "Promote on Twitter, Reddit, LinkedIn, IndieHackers",
+          "Goal: 100-200 free subscribers"
+        ],
+        "week2to4": [
+          "Enable paid subscriptions (€5-10/month or €50-100/year)",
+          "Offer paid-only content: templates, case studies, Q&A",
+          "Run founding member special (50% off annual)",
+          "Guest post on 3-5 established newsletters",
+          "Goal: 20-30 paid subscribers (€100-300 MRR)"
+        ],
+        "month2to3": [
+          "Increase to 2 posts/week (1 free, 1 paid)",
+          "Launch referral program (free months for referrals)",
+          "Add sponsorships at 1000+ subs (€500-1000/email)",
+          "Create premium course from top content (€197-497)",
+          "Goal: 500+ paid subs, €3K-5K MRR"
+        ],
+        "month4to12": [
+          "Launch podcast version (auto-generated from posts)",
+          "Build community (Discord/Slack, €19/month)",
+          "Host virtual summits (€97-197 tickets)",
+          "Explore B2B team subscriptions (€500-2000/year)",
+          "Goal: 1000+ paid subs, €6K-10K MRR"
+        ]
+      },
+      "operations": {
+        "toolsRequired": ["Substack (free - 10% fee on paid subs)", "Canva (free - graphics)", "Twitter/LinkedIn (free - promotion)", "Beehiiv (alternative - better growth tools)"],
+        "automationStack": ["Substack auto-delivery", "Social media cross-posting", "Email sequences for new subs", "Referral tracking"],
+        "skillsNeeded": ["Writing/editing", "Content strategy", "Audience building", "Basic design"],
+        "weeklyTimeRequirement": "8-12 hours (weeks 1-4), 6-10 hours (months 2-3), 4-8 hours (months 4-12)",
+        "outsourcingOpportunities": ["Editing (€30-60/post)", "Graphics (€20-40/post)", "Social media (€100-300/month)", "Research (€15-30/hour)"]
+      },
+      "automation": {
+        "immediateAutomation": ["Email delivery", "Social cross-posting", "Referral tracking", "Payment processing"],
+        "aiAssistOpportunities": ["Draft generation", "Headline optimization", "Research summaries", "Comment responses"],
+        "fullyAutonomousPotential": ["Entire distribution pipeline", "A/B testing", "Subscriber segmentation", "Revenue analytics"]
+      },
+      "risks": {
+        "primary": ["Slow growth - takes 6-12 months to meaningful revenue", "Writer's burnout from weekly commitment", "Free content cannibalizes paid conversions", "Platform risk - Substack policy changes"],
+        "mitigation": ["Batch write 4-6 posts ahead of time", "Repurpose content across platforms (Twitter threads, LinkedIn)", "Build email list you own (Substack allows exports)", "Focus on specific niche, not broad 'AI for everyone'"]
+      },
+      "competition": {
+        "competitors": ["The Batch by deeplearning.ai (free, 500K+ subs)", "Ben's Bites (AI news, paid tier)", "TLDR newsletters (multiple niches, free)", "Hundreds of small AI newsletters on Substack"],
+        "marketGaps": ["Few EU-focused AI business newsletters", "Limited automation workflow focus", "No finance/audit professional perspective", "Most are news aggregation, not implementation"],
+        "positioningEdge": "CA/KPMG credibility, automation workflows (not just news), Chad Inc ecosystem, implementation-focused"
+      },
+      "validationSignals": [
+        "Substack has 1M+ paid subscribers platform-wide",
+        "r/Entrepreneur daily newsletter promotion posts",
+        "IndieHackers: multiple newsletter creators at €5K-20K MRR",
+        "Twitter: #newsletter hashtag 500K+ posts",
+        "Pain point: 'Too much AI news, not enough actionable strategy'"
+      ],
+      "strategicFit": {
+        "alignmentScore": 10,
+        "synergies": ["Promotes all Chad Inc ventures", "Content repurposing from other work", "Audience building for products", "Authority/credibility builder"],
+        "crossSellingOpportunities": ["Automation services", "Digital products", "YouTube channel", "AI agent services", "Sponsorships"]
+      },
+      "launchReadiness": {
+        "canLaunchWithin7Days": true,
+        "difficulty": "low"
+      }
+    },
+    {
+      "ventureName": "Stock/Crypto AI Analysis Tool (SaaS)",
+      "slug": "stock-crypto-ai-saas",
+      "status": "backlog",
+      "priority": "low",
+      "score": {
+        "speedToRevenue": 4,
+        "startupEfficiency": 4,
+        "marginPotential": 10,
+        "automationPotential": 10,
+        "competitionAdvantage": 4,
+        "total": 32
+      },
+      "overview": {
+        "summary": "AI-powered market analysis tool: sentiment analysis on news/social, technical pattern recognition, portfolio risk scoring. Freemium model.",
+        "problemSolved": "Retail traders waste hours on research and still miss signals. Institutions have Bloomberg terminals; retail has nothing.",
+        "targetCustomer": "Retail traders, crypto investors, finance enthusiasts (NOT financial advisors)",
+        "valueProposition": "Institutional-grade analysis at retail price. Save 10+ hours/week on research.",
+        "whyNow": "AI makes analysis accessible, crypto/trading retail participation at all-time highs, API costs dropping"
+      },
+      "financials": {
+        "startupCost": 500,
+        "monthlyOverhead": 100,
+        "grossMarginPercent": 90,
+        "pricingModel": "Freemium + Pro (€9/month) + Premium (€29/month)",
+        "month1Revenue": 0,
+        "month3Revenue": 500,
+        "month6Revenue": 2500,
+        "month12Revenue": 10000,
+        "estimatedMonthlyProfit": 9000
+      },
+      "executionPlan": {
+        "week1": [
+          "Build simple web app (Next.js + Vercel - free)",
+          "Integrate free APIs: CoinGecko, Alpha Vantage, Twitter API",
+          "Create 3 core features: sentiment dashboard, price alerts, portfolio tracker",
+          "Add Stripe for payments (freemium: free + €9/mo Pro)",
+          "Beta test with 10-20 traders from Reddit/Twitter"
+        ],
+        "week2to4": [
+          "Launch on Product Hunt, Reddit (r/CryptoCurrency, r/stocks)",
+          "Collect feedback, fix bugs, add requested features",
+          "Content marketing: daily market analysis posts on Twitter",
+          "Partner with 2-3 finance influencers for reviews",
+          "Goal: 100 free users, 5-10 paid (€50-100 MRR)"
+        ],
+        "month2to3": [
+          "Add AI features: pattern recognition, trade suggestions",
+          "Launch €29/mo Premium tier (advanced signals, API access)",
+          "Build affiliate program (20% recurring commission)",
+          "Explore B2B: white-label for trading educators",
+          "Goal: 500 free, 50 paid (€2K-5K MRR)"
+        ],
+        "month4to12": [
+          "Add mobile app (React Native)",
+          "Integrate more data sources (news, SEC filings, on-chain)",
+          "Launch community tier (€49/month, Discord access)",
+          "Explore institutional tier (€500-2000/month)",
+          "Goal: 2000 free, 200 paid (€8K-12K MRR)"
+        ]
+      },
+      "operations": {
+        "toolsRequired": ["Next.js + Vercel (free - hosting)", "Supabase (free tier - database/auth)", "CoinGecko API (free)", "Alpha Vantage (free-25/mo)", "Stripe (payments)"],
+        "automationStack": ["Data ingestion pipelines", "Alert notifications", "Report generation", "Billing/subscription management"],
+        "skillsNeeded": ["React/Next.js development", "API integration", "Basic ML/AI", "Marketing"],
+        "weeklyTimeRequirement": "20-30 hours (weeks 1-4), 15-25 hours (months 2-3), 10-15 hours (months 4-12)",
+        "outsourcingOpportunities": ["Frontend dev (€30-60/hour)", "ML engineer (€50-100/hour)", "Marketing (€500-2000/month)", "Customer support (€15-25/hour)"]
+      },
+      "automation": {
+        "immediateAutomation": ["Data ingestion", "Alert triggers", "Report generation", "Subscription billing"],
+        "aiAssistOpportunities": ["Sentiment analysis", "Pattern detection", "Risk scoring", "Customer support"],
+        "fullyAutonomousPotential": ["Entire analysis pipeline", "Multi-asset coverage", "Personalized recommendations", "Risk management"]
+      },
+      "risks": {
+        "primary": ["Regulatory risk - financial advice disclaimers critical", "API costs scale with users", "High churn if predictions are wrong", "Competition from established tools (TradingView, etc.)"],
+        "mitigation": ["Clear disclaimers: 'Not financial advice, educational only'", "Cache API responses, use paid tiers strategically", "Focus on analysis, not predictions (lower expectations)", "Niche down: focus on crypto OR specific market segment"]
+      },
+      "competition": {
+        "competitors": ["TradingView (€15-60/month, technical analysis)", "Bloomberg Terminal (€2K/month, institutional)", "CoinGecko/CoinMarketCap (free, basic data)", "Seeking Alpha (€29/month, fundamental analysis)"],
+        "marketGaps": ["No affordable AI-powered retail tool", "Crypto + stocks in one platform", "Sentiment + technical + fundamental combined", "EU-focused (GDPR compliant, EU markets)"],
+        "positioningEdge": "Finance professional credibility, AI-first approach, affordable for retail, EU compliance"
+      },
+      "validationSignals": [
+        "r/CryptoCurrency has 6M+ members, daily tool requests",
+        "TradingView has 50M+ users, €500M+ ARR",
+        "Product Hunt: AI finance tools get 500-2000 upvotes",
+        "Google Trends: 'AI stock analysis' +500% growth 2024-2026",
+        "Pain point: 'I need better tools but can't afford Bloomberg'"
+      ],
+      "strategicFit": {
+        "alignmentScore": 8,
+        "synergies": ["Uses finance/audit expertise", "AI/automation testing ground", "Content for newsletter", "Cross-sell to finance professionals"],
+        "crossSellingOpportunities": ["Newsletter sponsorship", "Automation services for traders", "Digital products (courses)", "YouTube channel"]
+      },
+      "launchReadiness": {
+        "canLaunchWithin7Days": false,
+        "difficulty": "high"
+      }
+    }
+  ],
+  "scoringCriteria": {
+    "speedToRevenue": "0-10 (10 = fastest, ≤7 days)",
+    "startupEfficiency": "0-10 (10 = lowest cost, ≤€100)",
+    "marginPotential": "0-10 (10 = highest margins, >70%)",
+    "automationPotential": "0-10 (10 = fully automated, >90%)",
+    "competitionAdvantage": "0-10 (10 = lowest competition, blue ocean)",
+    "threshold": "≥35/50 to add to pipeline, ≥40/50 for high-priority flag"
+  },
+  "scoutSchedule": {
+    "frequency": "Daily at 7:00 AM Europe/Amsterdam",
+    "sources": [
+      "Reddit: r/entrepreneur, r/sideproject, r/passive_income, r/digitalnomad",
+      "Twitter/X: #buildinpublic, #indiehackers, #saas",
+      "IndieHackers.com",
+      "ProductHunt.com",
+      "Medium: entrepreneurship, passive income tags"
+    ],
+    "focus": "Low upfront cost (<€100), high margins (>50%), automation potential, underserved niches"
+  }
+}
