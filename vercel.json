@@ -13,6 +13,10 @@
     "VITE_SUPABASE_ANON_KEY": {
       "type": "encrypted",
       "value": ""
+    },
+    "Supa_Publishable_key": {
+      "type": "encrypted",
+      "value": ""
     }
   }
 }
