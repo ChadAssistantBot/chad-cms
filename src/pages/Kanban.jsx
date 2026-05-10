@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Plus, MoreHorizontal, Calendar, User } from 'lucide-react'
+import { DndContext, DragOverlay, closestCorners, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { Plus, X, Calendar, User, Tag, AlertCircle, CheckCircle2, Clock } from 'lucide-react'
 
 const COLUMNS = [
   { id: 'intake', label: '📨 Intake', color: 'bg-gray-500' },
@@ -21,10 +24,76 @@ const PRIORITY_COLORS = {
   P3: 'bg-green-500/20 text-green-400 border-green-500/30',
 }
 
+// Sortable Task Card Component
+function SortableTask({ task, onClick }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
+  
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'grab',
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => onClick(task)}
+      className="bg-panel-strong border border-line rounded-xl p-4 hover:border-gold/50 transition group mb-3"
+    >
+      <div className="flex items-start justify-between mb-2">
+        <span className={`px-2 py-0.5 text-xs font-bold rounded border ${PRIORITY_COLORS[task.priority]}`}>
+          {task.priority}
+        </span>
+        {task.approval_required && (
+          <span className="text-xs text-gold flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" />
+            Approval
+          </span>
+        )}
+      </div>
+
+      <h3 className="font-semibold mb-2">{task.title}</h3>
+      
+      {task.description && (
+        <p className="text-sm text-muted mb-3 line-clamp-2">{task.description}</p>
+      )}
+
+      <div className="flex items-center gap-3 text-xs text-muted mb-3">
+        {task.due_date && (
+          <div className="flex items-center gap-1">
+            <Calendar className="w-3 h-3" />
+            {new Date(task.due_date).toLocaleDateString()}
+          </div>
+        )}
+        <div className="flex items-center gap-1">
+          <User className="w-3 h-3" />
+          {task.owner}
+        </div>
+      </div>
+
+      {task.tags && task.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {task.tags.slice(0, 3).map((tag, i) => (
+            <span key={i} className="text-xs px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Kanban({ onLogout }) {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
   const [showNewTask, setShowNewTask] = useState(false)
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [activeTask, setActiveTask] = useState(null)
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
@@ -34,6 +103,14 @@ export default function Kanban({ onLogout }) {
     due_date: '',
     tags: '',
   })
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  )
 
   useEffect(() => {
     fetchTasks()
@@ -52,10 +129,11 @@ export default function Kanban({ onLogout }) {
       console.error('Error fetching tasks:', error)
       // Fallback to sample data
       setTasks([
-        { id: '1', title: 'Set up Supabase', description: 'Create project and run schema', priority: 'P0', status: 'done', owner: 'Chad', due_date: '2026-05-11' },
-        { id: '2', title: 'Deploy to Vercel', description: 'Connect GitHub and deploy', priority: 'P0', status: 'done', owner: 'Chad', due_date: '2026-05-11' },
-        { id: '3', title: 'Add Kanban Board', description: 'Full drag-and-drop board', priority: 'P1', status: 'in-progress', owner: 'Chad', due_date: '2026-05-11' },
-        { id: '4', title: 'Test All Features', description: 'QA pass on all pages', priority: 'P2', status: 'backlog', owner: 'Chad', due_date: '2026-05-12' },
+        { id: '1', title: 'Set up Supabase', description: 'Create project and run migration schema', priority: 'P0', status: 'done', owner: 'Chad', due_date: '2026-05-11', tags: ['infrastructure', 'database'], approval_required: false },
+        { id: '2', title: 'Deploy to Vercel', description: 'Connect GitHub repository and configure environment variables', priority: 'P0', status: 'done', owner: 'Chad', due_date: '2026-05-11', tags: ['deployment', 'infrastructure'], approval_required: false },
+        { id: '3', title: 'Add Kanban Board', description: 'Full drag-and-drop Kanban board with 8 columns and task management', priority: 'P1', status: 'in-progress', owner: 'Chad', due_date: '2026-05-11', tags: ['feature', 'ui'], approval_required: false },
+        { id: '4', title: 'Test All Features', description: 'Complete QA pass on all pages before launch', priority: 'P2', status: 'backlog', owner: 'Chad', due_date: '2026-05-12', tags: ['testing', 'qa'], approval_required: false },
+        { id: '5', title: 'Fix Mobile Responsive', description: 'Ensure all pages work on mobile devices', priority: 'P2', status: 'intake', owner: 'Chad', due_date: '2026-05-13', tags: ['bug', 'mobile'], approval_required: false },
       ])
     } finally {
       setLoading(false)
@@ -82,7 +160,17 @@ export default function Kanban({ onLogout }) {
       setNewTask({ title: '', description: '', priority: 'P2', status: 'intake', owner: 'Chad', due_date: '', tags: '' })
     } catch (error) {
       console.error('Error creating task:', error)
-      alert('Failed to create task. Make sure Supabase is connected.')
+      // For demo, add locally even if Supabase fails
+      const localTask = {
+        id: Date.now().toString(),
+        ...newTask,
+        tags: newTask.tags.split(',').map(t => t.trim()).filter(Boolean),
+        approval_required: newTask.priority === 'P0',
+        created_at: new Date().toISOString(),
+      }
+      setTasks([localTask, ...tasks])
+      setShowNewTask(false)
+      setNewTask({ title: '', description: '', priority: 'P2', status: 'intake', owner: 'Chad', due_date: '', tags: '' })
     }
   }
 
@@ -96,21 +184,38 @@ export default function Kanban({ onLogout }) {
       if (error) throw error
       
       setTasks(tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t))
+      if (selectedTask && selectedTask.id === taskId) {
+        setSelectedTask({ ...selectedTask, status: newStatus })
+      }
     } catch (error) {
       console.error('Error updating task:', error)
+      // Update locally even if Supabase fails
+      setTasks(tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t))
     }
   }
 
-  function moveTask(taskId, direction) {
-    const task = tasks.find(t => t.id === taskId)
-    if (!task) return
-    
-    const currentIndex = COLUMNS.findIndex(c => c.id === task.status)
-    const newIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1
-    
-    if (newIndex >= 0 && newIndex < COLUMNS.length) {
-      updateTaskStatus(taskId, COLUMNS[newIndex].id)
+  function handleDragStart(event) {
+    const { active } = event
+    const task = tasks.find(t => t.id === active.id)
+    setActiveTask(task)
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    setActiveTask(null)
+
+    if (over && active.id !== over.id) {
+      const task = tasks.find(t => t.id === active.id)
+      const newColumnId = over.id // over.id is the column id
+      
+      if (task && task.status !== newColumnId) {
+        updateTaskStatus(active.id, newColumnId)
+      }
     }
+  }
+
+  function getTasksByColumn(columnId) {
+    return tasks.filter(t => t.status === columnId)
   }
 
   return (
@@ -141,7 +246,7 @@ export default function Kanban({ onLogout }) {
         <header className="mb-8 flex justify-between items-start">
           <div>
             <h1 className="text-4xl font-bold mb-2">Kanban Board</h1>
-            <p className="text-muted">Track tasks from intake to completion</p>
+            <p className="text-muted">Drag and drop tasks across workflow stages</p>
           </div>
           <button
             onClick={() => setShowNewTask(true)}
@@ -152,109 +257,103 @@ export default function Kanban({ onLogout }) {
           </button>
         </header>
 
-        {/* Kanban Board */}
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {COLUMNS.map((column) => {
-            const columnTasks = tasks.filter(t => t.status === column.id)
-            
-            return (
-              <div
-                key={column.id}
-                className="flex-shrink-0 w-80 bg-panel border border-line rounded-2xl"
-              >
-                {/* Column Header */}
-                <div className="p-4 border-b border-line flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${column.color}`}></div>
-                    <span className="font-bold">{column.label}</span>
+        {/* Stats */}
+        <div className="grid grid-cols-4 gap-4 mb-8">
+          <div className="bg-panel border border-line rounded-xl p-4">
+            <div className="text-sm text-muted mb-1">Total Tasks</div>
+            <div className="text-2xl font-bold">{tasks.length}</div>
+          </div>
+          <div className="bg-panel border border-line rounded-xl p-4">
+            <div className="text-sm text-muted mb-1">In Progress</div>
+            <div className="text-2xl font-bold text-yellow-400">{tasks.filter(t => t.status === 'in-progress').length}</div>
+          </div>
+          <div className="bg-panel border border-line rounded-xl p-4">
+            <div className="text-sm text-muted mb-1">Waiting</div>
+            <div className="text-2xl font-bold text-orange-400">{tasks.filter(t => t.status === 'waiting').length}</div>
+          </div>
+          <div className="bg-panel border border-line rounded-xl p-4">
+            <div className="text-sm text-muted mb-1">Done</div>
+            <div className="text-2xl font-bold text-green-400">{tasks.filter(t => t.status === 'done').length}</div>
+          </div>
+        </div>
+
+        {/* Kanban Board with Drag & Drop */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {COLUMNS.map((column) => {
+              const columnTasks = getTasksByColumn(column.id)
+              
+              return (
+                <div
+                  key={column.id}
+                  className="flex-shrink-0 w-96 bg-panel border border-line rounded-2xl"
+                >
+                  {/* Column Header */}
+                  <div className="p-4 border-b border-line flex items-center justify-between sticky top-0 bg-panel rounded-t-2xl">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${column.color}`}></div>
+                      <span className="font-bold">{column.label}</span>
+                    </div>
+                    <span className="text-xs text-muted bg-panel-strong px-2 py-1 rounded-full">
+                      {columnTasks.length}
+                    </span>
                   </div>
-                  <span className="text-xs text-muted bg-panel-strong px-2 py-1 rounded-full">
-                    {columnTasks.length}
+
+                  {/* Drop Zone */}
+                  <div className="p-3 min-h-[500px]">
+                    <SortableContext
+                      items={columnTasks.map(t => t.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {columnTasks.map((task) => (
+                        <SortableTask
+                          key={task.id}
+                          task={task}
+                          onClick={setSelectedTask}
+                        />
+                      ))}
+                    </SortableContext>
+
+                    {columnTasks.length === 0 && (
+                      <div className="text-center py-12 text-muted text-sm border-2 border-dashed border-line/50 rounded-xl">
+                        Drop tasks here
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Drag Overlay */}
+          <DragOverlay>
+            {activeTask ? (
+              <div className="bg-panel-strong border-2 border-gold rounded-xl p-4 shadow-2xl rotate-3 max-w-xs">
+                <div className="flex items-start justify-between mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded border ${PRIORITY_COLORS[activeTask.priority]}`}>
+                    {activeTask.priority}
                   </span>
                 </div>
-
-                {/* Tasks */}
-                <div className="p-3 space-y-3 min-h-[400px]">
-                  {columnTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="bg-panel-strong border border-line rounded-xl p-4 hover:border-gold/50 transition cursor-pointer group"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <span className={`px-2 py-0.5 text-xs font-bold rounded border ${PRIORITY_COLORS[task.priority]}`}>
-                          {task.priority}
-                        </span>
-                        <button className="opacity-0 group-hover:opacity-100 text-muted hover:text-white transition">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </button>
-                      </div>
-
-                      <h3 className="font-semibold mb-2">{task.title}</h3>
-                      
-                      {task.description && (
-                        <p className="text-sm text-muted mb-3 line-clamp-2">{task.description}</p>
-                      )}
-
-                      <div className="flex items-center gap-3 text-xs text-muted mb-3">
-                        {task.due_date && (
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {new Date(task.due_date).toLocaleDateString()}
-                          </div>
-                        )}
-                        <div className="flex items-center gap-1">
-                          <User className="w-3 h-3" />
-                          {task.owner}
-                        </div>
-                      </div>
-
-                      {task.tags && task.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {task.tags.slice(0, 3).map((tag, i) => (
-                            <span key={i} className="text-xs px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Move Buttons */}
-                      <div className="flex gap-2 pt-2 border-t border-line/50">
-                        <button
-                          onClick={() => moveTask(task.id, 'left')}
-                          disabled={COLUMNS.findIndex(c => c.id === task.status) === 0}
-                          className="flex-1 px-2 py-1 text-xs bg-panel border border-line rounded hover:bg-gold/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
-                        >
-                          ← Back
-                        </button>
-                        <button
-                          onClick={() => moveTask(task.id, 'right')}
-                          disabled={COLUMNS.findIndex(c => c.id === task.status) === COLUMNS.length - 1}
-                          className="flex-1 px-2 py-1 text-xs bg-panel border border-line rounded hover:bg-gold/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
-                        >
-                          Forward →
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-
-                  {columnTasks.length === 0 && (
-                    <div className="text-center py-8 text-muted text-sm">
-                      No tasks
-                    </div>
-                  )}
-                </div>
+                <h3 className="font-semibold">{activeTask.title}</h3>
               </div>
-            )
-          })}
-        </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </main>
 
       {/* New Task Modal */}
       {showNewTask && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-panel-strong border border-line rounded-3xl p-8 max-w-lg w-full">
-            <h2 className="text-2xl font-bold mb-6">Create New Task</h2>
+          <div className="bg-panel-strong border border-line rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Create New Task</h2>
+              <button onClick={() => setShowNewTask(false)} className="text-3xl text-muted hover:text-white">×</button>
+            </div>
             
             <form onSubmit={createTask} className="space-y-4">
               <div>
@@ -344,6 +443,126 @@ export default function Kanban({ onLogout }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Task Detail Modal */}
+      {selectedTask && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-panel-strong border border-line rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className={`px-3 py-1 text-sm font-bold rounded border ${PRIORITY_COLORS[selectedTask.priority]}`}>
+                    {selectedTask.priority}
+                  </span>
+                  {selectedTask.approval_required && (
+                    <span className="text-xs text-gold flex items-center gap-1 px-2 py-1 bg-gold/10 rounded">
+                      <AlertCircle className="w-3 h-3" />
+                      Requires Approval
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-2xl font-bold">{selectedTask.title}</h2>
+              </div>
+              <button onClick={() => setSelectedTask(null)} className="text-3xl text-muted hover:text-white">×</button>
+            </div>
+
+            <div className="space-y-6">
+              {/* Description */}
+              <div>
+                <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <Tag className="w-4 h-4" />
+                  Description
+                </h3>
+                <p className="text-muted leading-relaxed">
+                  {selectedTask.description || 'No description provided.'}
+                </p>
+              </div>
+
+              {/* Status */}
+              <div>
+                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Status
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {COLUMNS.map((col) => (
+                    <button
+                      key={col.id}
+                      onClick={() => updateTaskStatus(selectedTask.id, col.id)}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        selectedTask.status === col.id
+                          ? 'bg-gold text-bg'
+                          : 'bg-panel border border-line hover:border-gold/50'
+                      }`}
+                    >
+                      {col.label.split(' ').slice(1).join(' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Meta Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-panel rounded-xl p-4 border border-line">
+                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
+                    <User className="w-4 h-4" />
+                    Owner
+                  </div>
+                  <div className="font-semibold">{selectedTask.owner}</div>
+                </div>
+
+                <div className="bg-panel rounded-xl p-4 border border-line">
+                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
+                    <Calendar className="w-4 h-4" />
+                    Due Date
+                  </div>
+                  <div className="font-semibold">
+                    {selectedTask.due_date ? new Date(selectedTask.due_date).toLocaleDateString() : 'Not set'}
+                  </div>
+                </div>
+
+                <div className="bg-panel rounded-xl p-4 border border-line">
+                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
+                    <Clock className="w-4 h-4" />
+                    Created
+                  </div>
+                  <div className="font-semibold">
+                    {selectedTask.created_at ? new Date(selectedTask.created_at).toLocaleDateString() : 'Recently'}
+                  </div>
+                </div>
+
+                <div className="bg-panel rounded-xl p-4 border border-line">
+                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
+                    <Tag className="w-4 h-4" />
+                    Tags
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedTask.tags && selectedTask.tags.length > 0 ? (
+                      selectedTask.tags.map((tag, i) => (
+                        <span key={i} className="text-xs px-2 py-1 bg-blue-500/10 text-blue-400 rounded">
+                          {tag}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-muted">No tags</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-4 pt-4 border-t border-line">
+                <button
+                  onClick={() => setSelectedTask(null)}
+                  className="flex-1 px-4 py-3 border border-line rounded-lg hover:bg-line/20 transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
