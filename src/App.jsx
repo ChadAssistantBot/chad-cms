@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import Finances from './pages/Finances'
 import Ventures from './pages/Ventures'
 import Agents from './pages/Agents'
+import Kanban from './pages/Kanban'
 import './App.css'
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path="/finances" element={<Finances onLogout={handleLogout} />} />
           <Route path="/ventures" element={<Ventures onLogout={handleLogout} />} />
           <Route path="/agents" element={<Agents onLogout={handleLogout} />} />
+          <Route path="/kanban" element={<Kanban onLogout={handleLogout} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

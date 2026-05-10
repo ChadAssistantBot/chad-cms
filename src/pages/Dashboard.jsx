@@ -34,6 +34,9 @@ export default function Dashboard({ onLogout }) {
           <Link to="/agents" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">
             🤖 Agents
           </Link>
+          <Link to="/kanban" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">
+            ✅ Kanban
+          </Link>
         </nav>
 
         <button
