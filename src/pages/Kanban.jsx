@@ -4,7 +4,8 @@ import { supabase } from '../lib/supabase'
 import { DndContext, DragOverlay, closestCorners, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, X, Calendar, User, Tag, AlertCircle, CheckCircle2, Clock } from 'lucide-react'
+import { Plus, X, Calendar, User, Tag, AlertCircle, CheckCircle2, Clock, Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const COLUMNS = [
   { id: 'intake', label: '📨 Intake', color: 'bg-gray-500' },
@@ -114,6 +115,29 @@ export default function Kanban({ onLogout }) {
 
   useEffect(() => {
     fetchTasks()
+
+    // Supabase Realtime Subscription
+    const channel = supabase
+      .channel('tasks-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'tasks' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setTasks((prev) => [payload.new, ...prev])
+            toast.success('New task added')
+          } else if (payload.eventType === 'UPDATE') {
+            setTasks((prev) => prev.map((t) => (t.id === payload.new.id ? payload.new : t)))
+          } else if (payload.eventType === 'DELETE') {
+            setTasks((prev) => prev.filter((t) => t.id === payload.old.id))
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   async function fetchTasks() {
@@ -142,6 +166,7 @@ export default function Kanban({ onLogout }) {
 
   async function createTask(e) {
     e.preventDefault()
+    const loadingToast = toast.loading('Creating task...')
     try {
       const { data, error } = await supabase
         .from('tasks')
@@ -155,11 +180,12 @@ export default function Kanban({ onLogout }) {
       
       if (error) throw error
       
-      setTasks([data, ...tasks])
+      toast.success('Task created!', { id: loadingToast })
       setShowNewTask(false)
       setNewTask({ title: '', description: '', priority: 'P2', status: 'intake', owner: 'Chad', due_date: '', tags: '' })
     } catch (error) {
       console.error('Error creating task:', error)
+      toast.error('Failed to create task', { id: loadingToast })
       // For demo, add locally even if Supabase fails
       const localTask = {
         id: Date.now().toString(),
@@ -183,12 +209,14 @@ export default function Kanban({ onLogout }) {
       
       if (error) throw error
       
+      toast.success(`Task moved to ${newStatus}`)
       setTasks(tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t))
       if (selectedTask && selectedTask.id === taskId) {
         setSelectedTask({ ...selectedTask, status: newStatus })
       }
     } catch (error) {
       console.error('Error updating task:', error)
+      toast.error('Failed to update task')
       // Update locally even if Supabase fails
       setTasks(tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t))
     }

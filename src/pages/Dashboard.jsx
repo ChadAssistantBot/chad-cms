@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { CheckSquare, TrendingUp, Rocket, Users } from 'lucide-react'
 
-export default function Dashboard({ onLogout }) {
+export default function Dashboard({ onLogout, searchQuery }) {
   const stats = [
     { label: 'Total Tasks', value: '11', icon: CheckSquare, color: 'text-blue' },
     { label: 'Active Ventures', value: '5', icon: Rocket, color: 'text-green' },
@@ -53,6 +53,15 @@ export default function Dashboard({ onLogout }) {
           <h1 className="text-4xl font-bold mb-2">Welcome Back, Boss!</h1>
           <p className="text-muted">Here's what's happening at Chad Inc.</p>
         </header>
+
+        {/* Search Results */}
+        {searchQuery && (
+          <div className="mb-8 p-6 bg-panel border border-line rounded-2xl">
+            <h2 className="text-2xl font-bold mb-4">Search Results for "{searchQuery}"</h2>
+            <p className="text-muted">Search functionality is under development. This will search across Tasks, Finances, Ventures, and Agents.</p>
+            {/* TODO: Implement actual search results here using Supabase full-text search or client-side filtering */}
+          </div>
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-4 gap-6 mb-8">

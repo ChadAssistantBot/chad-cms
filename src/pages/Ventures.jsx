@@ -1,12 +1,23 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Trophy, Clock, DollarSign, Loader2 } from 'lucide-react'
+import { Trophy, Clock, DollarSign, Loader2, Plus, Edit, Trash2 } from 'lucide-react'
+import Button from '../components/Button'
+import Card from '../components/Card'
+import Modal from '../components/Modal'
+import toast from 'react-hot-toast'
+import { useForm } from 'react-hook-form'
+import Input from '../components/Input'
+import { getCurrentUser, canCreate, canDelete } from '../lib/rbac'
 
 export default function Ventures({ onLogout }) {
   const [ventures, setVentures] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedVenture, setSelectedVenture] = useState(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  
+  const currentUser = getCurrentUser()
+  const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
   useEffect(() => {
     fetchVentures()
@@ -23,6 +34,7 @@ export default function Ventures({ onLogout }) {
       setVentures(data || [])
     } catch (error) {
       console.error('Error fetching ventures:', error)
+      toast.error('Failed to load ventures')
       setVentures([])
     } finally {
       setLoading(false)
@@ -48,14 +60,73 @@ export default function Ventures({ onLogout }) {
           <Link to="/kanban" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">✅ Kanban</Link>
         </nav>
 
-        <button onClick={onLogout} className="absolute bottom-4 left-4 right-4 px-4 py-2 border border-line rounded-lg hover:bg-line/20 transition text-sm">Log Out</button>
+        <Button onClick={onLogout} className="absolute bottom-4 left-4 right-4 border border-line hover:bg-line/20 transition text-sm">Log Out</Button>
       </aside>
 
       <main className="ml-56 p-8">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Venture Pipeline</h1>
-          <p className="text-muted">Ranked opportunities scored by ROI, speed, and strategic fit</p>
+        <header className="mb-8 flex justify-between items-end">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Venture Pipeline</h1>
+            <p className="text-muted">Ranked opportunities scored by ROI, speed, and strategic fit</p>
+          </div>
+          {canCreate(currentUser.role) && (
+            <Button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-2 bg-gold text-bg font-bold hover:opacity-90 transition"
+            >
+              <Plus className="w-4 h-4" /> New Venture
+            </Button>
+          )}
         </header>
+
+        <Modal 
+          isOpen={isCreateModalOpen} 
+          onClose={() => setIsCreateModalOpen(false)} 
+          title="Add New Venture"
+        >
+          <form onSubmit={handleSubmit(async (data) => {
+            try {
+              const { error } = await supabase.from('ventures').insert([{
+                ...data,
+                rank: ventures.length + 1,
+                status: 'research'
+              }])
+              if (error) throw error
+              toast.success('Venture added!')
+              setIsCreateModalOpen(false)
+              reset()
+              fetchVentures()
+            } catch (error) {
+              toast.error('Failed to add venture')
+            }
+          })} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Venture Name</label>
+              <Input {...register('name', { required: 'Name is required' })} />
+              {errors.name && <p className="text-red text-xs mt-1">{errors.name.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea 
+                {...register('description', { required: 'Description is required' })}
+                className="w-full bg-bg border border-line rounded-lg px-4 py-2 text-white focus:outline-none focus:border-gold"
+                rows="3"
+              />
+              {errors.description && <p className="text-red text-xs mt-1">{errors.description.message}</p>}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Time to Revenue</label>
+                <Input {...register('time_to_revenue')} placeholder="e.g. 1-2 weeks" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Startup Cost</label>
+                <Input {...register('startup_cost')} placeholder="e.g. €50" />
+              </div>
+            </div>
+            <Button type="submit" className="w-full bg-gold text-bg font-bold">Create Venture</Button>
+          </form>
+        </Modal>
 
         {loading ? (
           <div className="flex justify-center py-10">
@@ -66,10 +137,10 @@ export default function Ventures({ onLogout }) {
         ) : (
           <div className="grid gap-6">
             {ventures.map((venture) => (
-              <div
+              <Card
                 key={venture.id}
                 onClick={() => setSelectedVenture(venture)}
-                className="bg-panel border border-line rounded-2xl p-6 cursor-pointer hover:border-gold transition"
+                className="bg-panel border border-line cursor-pointer hover:border-gold transition"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -103,23 +174,29 @@ export default function Ventures({ onLogout }) {
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${venture.status === 'active' ? 'bg-green/20 text-green' : 'bg-blue/20 text-blue'}`}>
                     {venture.status}
                   </span>
-                  <button className="px-4 py-2 bg-gold text-bg font-bold rounded-lg hover:opacity-90 transition">
-                    View Details →
-                  </button>
+                  <div className="flex gap-2">
+                    <Button className="bg-gold text-bg font-bold hover:opacity-90 transition">
+                      View Details →
+                    </Button>
+                    {canDelete(currentUser.role) && (
+                      <Button 
+                        onClick={(e) => { e.stopPropagation(); /* handle delete */ }}
+                        className="bg-red/10 border border-red/30 text-red font-bold hover:bg-red/20 transition"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
 
         {/* Detail Modal */}
-        {selectedVenture && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-panel-strong border border-line rounded-3xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="flex justify-between items-start mb-6">
-                <h2 className="text-2xl font-bold">{selectedVenture.name}</h2>
-                <button onClick={() => setSelectedVenture(null)} className="text-3xl text-muted hover:text-white">×</button>
-              </div>
+        <Modal isOpen={!!selectedVenture} onClose={() => setSelectedVenture(null)} title={selectedVenture?.name || ''}>
+          {selectedVenture && (
+            <div className="max-h-[60vh] overflow-y-auto">
 
               <div className="mb-6">
                 <p className="text-muted mb-4">{selectedVenture.description}</p>

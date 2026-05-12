@@ -1,11 +1,16 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Cpu, FolderGit2, Loader2 } from 'lucide-react'
+import { Cpu, FolderGit2, Loader2, Trash2 } from 'lucide-react'
+import Button from '../components/Button'
+import Card from '../components/Card'
+import toast from 'react-hot-toast'
+import { getCurrentUser, canDelete } from '../lib/rbac'
 
 export default function Agents({ onLogout }) {
   const [agents, setAgents] = useState([])
   const [loading, setLoading] = useState(true)
+  const currentUser = getCurrentUser()
 
   useEffect(() => {
     fetchAgents()
@@ -22,6 +27,7 @@ export default function Agents({ onLogout }) {
       setAgents(data || [])
     } catch (error) {
       console.error('Error fetching agents:', error)
+      toast.error('Failed to load agents, using fallback data')
       // Fallback to locally defined agents if Supabase fails
       setAgents([
         {
@@ -67,7 +73,7 @@ export default function Agents({ onLogout }) {
           <Link to="/kanban" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">✅ Kanban</Link>
         </nav>
 
-        <button onClick={onLogout} className="absolute bottom-4 left-4 right-4 px-4 py-2 border border-line rounded-lg hover:bg-line/20 transition text-sm">Log Out</button>
+        <Button onClick={onLogout} className="absolute bottom-4 left-4 right-4 border border-line hover:bg-line/20 transition text-sm">Log Out</Button>
       </aside>
 
       <main className="ml-56 p-8">
@@ -77,7 +83,7 @@ export default function Agents({ onLogout }) {
         </header>
 
         {/* Org Chart Header */}
-        <div className="bg-gradient-to-r from-gold/10 to-blue/10 border border-line rounded-2xl p-6 mb-8">
+        <Card className="bg-gradient-to-r from-gold/10 to-blue/10 border border-line mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">💵 Chad Inc - AI Division</h2>
             <span className="px-3 py-1 bg-gold/20 text-gold text-sm font-bold rounded-full">
@@ -98,7 +104,7 @@ export default function Agents({ onLogout }) {
               </span>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Agents Grid */}
         <div className="grid grid-cols-2 gap-6">
@@ -110,7 +116,7 @@ export default function Agents({ onLogout }) {
             <div className="col-span-2 text-center py-10 text-muted">No agents configured.</div>
           ) : (
             agents.map((agent) => (
-              <div key={agent.id} className="bg-panel border border-line rounded-2xl p-6 hover:border-gold transition">
+              <Card key={agent.id} className="bg-panel border border-line hover:border-gold transition">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="text-5xl">{agent.avatar}</div>
                   <div className="flex-1">
@@ -135,10 +141,17 @@ export default function Agents({ onLogout }) {
                   </div>
                 </div>
 
-                <button className="w-full px-4 py-2 bg-gold/10 border border-gold/30 text-gold font-bold rounded-lg hover:bg-gold/20 transition">
-                  ⚙️ View Details
-                </button>
-              </div>
+                <div className="flex gap-2">
+                  <Button className="flex-1 bg-gold/10 border border-gold/30 text-gold font-bold hover:bg-gold/20 transition">
+                    ⚙️ View Details
+                  </Button>
+                  {canDelete(currentUser.role) && (
+                    <Button className="bg-red/10 border border-red/30 text-red font-bold hover:bg-red/20 transition">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              </Card>
             ))
           )}
         </div>

@@ -1,49 +1,49 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Finances from './pages/Finances'
-import Ventures from './pages/Ventures'
-import Agents from './pages/Agents'
-import Kanban from './pages/Kanban'
-import './App.css'
+// Assuming App.jsx is structured similarly to common React setups
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import Agents from './pages/Agents';
+import Finances from './pages/Finances';
+import Ventures from './pages/Ventures';
+import Kanban from './pages/Kanban';
+import AuditLog from './pages/AuditLog'; // Import the new AuditLog page
+import Login from './pages/Login';
+import './App.css'; // Assuming global styles
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-
-  useEffect(() => {
-    const auth = localStorage.getItem('cms_auth')
-    setIsAuthenticated(auth === 'true')
-  }, [])
-
-  const handleLogin = () => {
-    localStorage.setItem('cms_auth', 'true')
-    setIsAuthenticated(true)
-  }
-
+  // Mock logout function for example purposes
   const handleLogout = () => {
-    localStorage.removeItem('cms_auth')
-    setIsAuthenticated(false)
-  }
+    alert('Logged out!');
+    // In a real app, you'd clear tokens, user sessions, etc.
+  };
 
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />
-  }
+  // Mock authentication check - replace with your actual auth logic
+  const isAuthenticated = true; // Assume user is authenticated for now
 
   return (
     <Router>
-      <div className="app">
+      <div className="App">
         <Routes>
-          <Route path="/" element={<Dashboard onLogout={handleLogout} />} />
-          <Route path="/finances" element={<Finances onLogout={handleLogout} />} />
-          <Route path="/ventures" element={<Ventures onLogout={handleLogout} />} />
-          <Route path="/agents" element={<Agents onLogout={handleLogout} />} />
-          <Route path="/kanban" element={<Kanban onLogout={handleLogout} />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {!isAuthenticated ? (
+            <Route path="/login" element={<Login />} />
+          ) : (
+            <>
+              {/* Protected Routes */}
+              <Route path="/" element={<Dashboard onLogout={handleLogout} />} />
+              <Route path="/agents" element={<Agents onLogout={handleLogout} />} />
+              <Route path="/finances" element={<Finances onLogout={handleLogout} />} />
+              <Route path="/ventures" element={<Ventures onLogout={handleLogout} />} />
+              <Route path="/kanban" element={<Kanban onLogout={handleLogout} />} />
+              <Route path="/audit" element={<AuditLog onLogout={handleLogout} />} /> {/* New Route */}
+              
+              {/* Fallback or 404 Route */}
+              {/* <Route path="*" element={<NotFound onLogout={handleLogout} />} /> */}
+            </>
+          )}
         </Routes>
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

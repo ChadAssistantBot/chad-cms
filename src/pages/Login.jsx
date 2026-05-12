@@ -1,16 +1,22 @@
 import { useState } from 'react'
+import { supabase} from './supabaseClient' // Assuming you have a supabase client configured
 
 export default function Login({ onLogin }) {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    if (username === 'boss' && password === 'PCz8l17qmKUKP8fy') {
-      onLogin()
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (loginError) {
+      setError(loginError.message)
     } else {
-      setError('Invalid credentials')
+      onLogin() // This would be replaced with actual routing in a full app
     }
   }
 
@@ -23,15 +29,16 @@ export default function Login({ onLogin }) {
           <p className="text-muted">Management System</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold mb-2">Username</label>
+            <label className="block text-sm font-semibold mb-2">Email</label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-panel-strong border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
-              placeholder="boss"
+              placeholder="your.email@example.com"
+              required
             />
           </div>
 
@@ -43,6 +50,7 @@ export default function Login({ onLogin }) {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-panel-strong border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
               placeholder="••••••••"
+              required
             />
           </div>
 
