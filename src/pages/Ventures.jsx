@@ -255,8 +255,8 @@ export default function Ventures({ onLogout }) {
                 </p>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </Modal>
       </main>
     </div>
   )
