@@ -1,7 +1,43 @@
 import { Link } from 'react-router-dom'
-import { ArrowUpCircle, ArrowDownCircle, TrendingUp } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
+import { ArrowUpCircle, ArrowDownCircle, TrendingUp, Loader2 } from 'lucide-react'
 
 export default function Finances({ onLogout }) {
+  const [transactions, setTransactions] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [totalIncome, setTotalIncome] = useState(0)
+  const [totalExpenses, setTotalExpenses] = useState(0)
+
+  useEffect(() => {
+    fetchTransactions()
+  }, [])
+
+  async function fetchTransactions() {
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false })
+      
+      if (error) throw error
+      setTransactions(data || [])
+
+      // Calculate totals
+      const income = data?.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0) || 0
+      const expenses = data?.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0) || 0
+      setTotalIncome(income)
+      setTotalExpenses(expenses)
+    } catch (error) {
+      console.error('Error fetching transactions:', error)
+      setTransactions([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const netProfit = totalIncome - totalExpenses
+
   return (
     <div className="min-h-screen">
       <aside className="fixed left-0 top-0 h-full w-56 bg-bg/80 backdrop-blur-xl border-r border-line p-4">
@@ -30,45 +66,74 @@ export default function Finances({ onLogout }) {
           <p className="text-muted">Track revenue, expenses, and venture P&L</p>
         </header>
 
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          <div className="bg-panel border border-line rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <ArrowUpCircle className="w-8 h-8 text-green" />
-              <div className="text-sm text-muted">Total Revenue</div>
-            </div>
-            <div className="text-3xl font-bold text-green">€0</div>
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <Loader2 className="w-8 h-8 animate-spin text-gold" />
           </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-3 gap-6 mb-8">
+              <div className="bg-panel border border-line rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <ArrowUpCircle className="w-8 h-8 text-green" />
+                  <div className="text-sm text-muted">Total Revenue</div>
+                </div>
+                <div className="text-3xl font-bold text-green">€{totalIncome.toFixed(2)}</div>
+              </div>
 
-          <div className="bg-panel border border-line rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <ArrowDownCircle className="w-8 h-8 text-red" />
-              <div className="text-sm text-muted">Total Expenses</div>
-            </div>
-            <div className="text-3xl font-bold text-red">€0</div>
-          </div>
+              <div className="bg-panel border border-line rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <ArrowDownCircle className="w-8 h-8 text-red" />
+                  <div className="text-sm text-muted">Total Expenses</div>
+                </div>
+                <div className="text-3xl font-bold text-red">€{totalExpenses.toFixed(2)}</div>
+              </div>
 
-          <div className="bg-panel border border-line rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <TrendingUp className="w-8 h-8 text-gold" />
-              <div className="text-sm text-muted">Net Profit</div>
+              <div className="bg-panel border border-line rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <TrendingUp className="w-8 h-8 text-gold" />
+                  <div className="text-sm text-muted">Net Profit</div>
+                </div>
+                <div className={`text-3xl font-bold ${netProfit >= 0 ? 'text-gold' : 'text-red'}`}>
+                  €{netProfit.toFixed(2)}
+                </div>
+              </div>
             </div>
-            <div className="text-3xl font-bold text-gold">€0</div>
-          </div>
-        </div>
 
-        <div className="bg-panel border border-line rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4">Getting Started</h2>
-          <p className="text-muted mb-4">
-            Connect Supabase to start tracking your finances. This will sync with your venture data automatically.
-          </p>
-          <div className="p-4 bg-panel-strong rounded-xl border border-line">
-            <code className="text-sm text-gold">
-              1. Set up Supabase project<br/>
-              2. Run migration scripts<br/>
-              3. Add transactions via UI or API
-            </code>
-          </div>
-        </div>
+            {transactions.length === 0 ? (
+              <div className="bg-panel border border-line rounded-2xl p-6">
+                <h2 className="text-xl font-bold mb-4">No Transactions Yet</h2>
+                <p className="text-muted mb-4">
+                  Start tracking your finances by adding transactions. This will sync with your venture data automatically.
+                </p>
+                <div className="p-4 bg-panel-strong rounded-xl border border-line">
+                  <code className="text-sm text-gold">
+                    1. Add income transactions when revenue is generated<br/>
+                    2. Log expenses as they occur<br/>
+                    3. View real-time P&L analysis
+                  </code>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-panel border border-line rounded-2xl p-6">
+                <h2 className="text-xl font-bold mb-4">Recent Transactions</h2>
+                <div className="space-y-3">
+                  {transactions.slice(0, 10).map((transaction) => (
+                    <div key={transaction.id} className="flex items-center justify-between p-4 bg-panel-strong rounded-xl border border-line">
+                      <div>
+                        <div className="font-semibold">{transaction.description || 'No description'}</div>
+                        <div className="text-sm text-muted">{transaction.category} • {new Date(transaction.date).toLocaleDateString()}</div>
+                      </div>
+                      <div className={`text-xl font-bold ${transaction.type === 'income' ? 'text-green' : 'text-red'}`}>
+                        {transaction.type === 'income' ? '+' : '-'}€{parseFloat(transaction.amount).toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </main>
     </div>
   )
