@@ -4,16 +4,6 @@ import { useAuth } from './contexts/AuthContext';
 import Sidebar from './components/Sidebar';
 import toast from 'react-hot-toast';
 
-// Lazy load pages for better performance
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Tasks = lazy(() => import('./pages/Tasks'));
-const Kanban = lazy(() => import('./pages/Kanban'));
-const Finances = lazy(() => import('./pages/Finances'));
-const Ventures = lazy(() => import('./pages/Ventures'));
-const Agents = lazy(() => import('./pages/Agents'));
-const AuditLog = lazy(() => import('./pages/AuditLog'));
-const Login = lazy(() => import('./pages/Login'));
-
 // Loading component
 function PageLoader() {
   return (
@@ -48,12 +38,18 @@ function AuthGuard({ children }) {
   return <Sidebar>{children}</Sidebar>;
 }
 
-// Layout wrapper for pages that have their own sidebar (legacy pages)
-function LegacyLayout({ children }) {
-  return <>{children}</>;
-}
+// Lazy load pages
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Tasks = lazy(() => import('./pages/Tasks'));
+const Kanban = lazy(() => import('./pages/Kanban'));
+const Finances = lazy(() => import('./pages/Finances'));
+const Ventures = lazy(() => import('./pages/Ventures'));
+const Agents = lazy(() => import('./pages/Agents'));
+const AuditLog = lazy(() => import('./pages/AuditLog'));
+const Login = lazy(() => import('./pages/Login'));
 
-export default function App() {
+// Main App Content (rendered inside Router)
+function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -72,65 +68,70 @@ export default function App() {
 
   if (!isAuthenticated) {
     return (
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
     );
   }
 
   return (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        {/* Main app with Sidebar layout */}
+        <Route path="/" element={
+          <AuthGuard>
+            <Dashboard />
+          </AuthGuard>
+        } />
+        <Route path="/tasks" element={
+          <AuthGuard>
+            <Tasks />
+          </AuthGuard>
+        } />
+        <Route path="/kanban" element={
+          <AuthGuard>
+            <Kanban />
+          </AuthGuard>
+        } />
+        <Route path="/finances" element={
+          <AuthGuard>
+            <Finances />
+          </AuthGuard>
+        } />
+        <Route path="/ventures" element={
+          <AuthGuard>
+            <Ventures />
+          </AuthGuard>
+        } />
+        <Route path="/agents" element={
+          <AuthGuard>
+            <Agents />
+          </AuthGuard>
+        } />
+        <Route path="/audit" element={
+          <AuthGuard>
+            <AuditLog />
+          </AuthGuard>
+        } />
+        
+        {/* Redirect login page when logged in */}
+        <Route path="/login" element={<Navigate to="/" replace />} />
+        
+        {/* 404 */}
+        <Route path="*" element={
+          <Navigate to="/" replace />
+        } />
+      </Routes>
+    </Suspense>
+  );
+}
+
+// Router wrapper at top level
+export default function App() {
+  return (
     <Router>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          {/* Main app with Sidebar layout */}
-          <Route path="/" element={
-            <AuthGuard>
-              <Dashboard />
-            </AuthGuard>
-          } />
-          <Route path="/tasks" element={
-            <AuthGuard>
-              <Tasks />
-            </AuthGuard>
-          } />
-          <Route path="/kanban" element={
-            <AuthGuard>
-              <Kanban />
-            </AuthGuard>
-          } />
-          <Route path="/finances" element={
-            <AuthGuard>
-              <Finances />
-            </AuthGuard>
-          } />
-          <Route path="/ventures" element={
-            <AuthGuard>
-              <Ventures />
-            </AuthGuard>
-          } />
-          <Route path="/agents" element={
-            <AuthGuard>
-              <Agents />
-            </AuthGuard>
-          } />
-          <Route path="/audit" element={
-            <AuthGuard>
-              <AuditLog />
-            </AuthGuard>
-          } />
-          
-          {/* Redirect login page when logged in */}
-          <Route path="/login" element={<Navigate to="/" replace />} />
-          
-          {/* 404 */}
-          <Route path="*" element={
-            <Navigate to="/" replace />
-          } />
-        </Routes>
-      </Suspense>
+      <AppContent />
     </Router>
   );
 }
