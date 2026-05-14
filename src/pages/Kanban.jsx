@@ -302,28 +302,28 @@ export default function Kanban({}) {
           className="flex-1 overflow-x-auto overflow-y-auto"
           style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
         >
-          <div className="flex gap-3 p-3 min-w-max">
+          <div className="flex gap-2 p-2 min-w-max">
             {COLUMNS.map((column) => {
               const columnTasks = getTasksByColumn(column.id)
               
               return (
                 <div
                   key={column.id}
-                  className="flex-shrink-0 w-56 bg-panel border border-line rounded-xl flex flex-col"
+                  className="flex-shrink-0 w-44 bg-panel border border-line rounded-xl flex flex-col"
                 >
                   {/* Compact Column Header */}
-                  <div className="p-2 border-b border-line flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-1.5">
-                      <div className={`w-2 h-2 rounded-full ${column.color}`}></div>
-                      <span className="font-semibold text-xs">{column.emoji} {column.label}</span>
+                  <div className="p-1.5 border-b border-line flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-1">
+                      <div className={`w-1.5 h-1.5 rounded-full ${column.color}`}></div>
+                      <span className="font-semibold text-[11px]">{column.emoji} {column.label}</span>
                     </div>
-                    <span className="text-[10px] text-muted bg-panel-strong px-1.5 py-0.5 rounded-full">
+                    <span className="text-[9px] text-muted bg-panel-strong px-1 py-0.5 rounded-full">
                       {columnTasks.length}
                     </span>
                   </div>
 
                   {/* Task List */}
-                  <div className="flex-1 overflow-y-auto p-2 min-h-0">
+                  <div className="flex-1 overflow-y-auto p-1.5 min-h-0">
                     <SortableContext
                       items={columnTasks.map(t => t.id)}
                       strategy={verticalListSortingStrategy}
@@ -338,7 +338,7 @@ export default function Kanban({}) {
                     </SortableContext>
 
                     {columnTasks.length === 0 && (
-                      <div className="text-center py-6 text-muted text-xs border-2 border-dashed border-line/50 rounded-lg">
+                      <div className="text-center py-4 text-muted text-[10px] border-2 border-dashed border-line/50 rounded-lg">
                         Drop here
                       </div>
                     )}
