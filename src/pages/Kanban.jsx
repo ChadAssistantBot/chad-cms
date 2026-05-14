@@ -3,28 +3,27 @@ import { supabase } from '../lib/supabase'
 import { DndContext, DragOverlay, closestCorners, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, X, Calendar, User, Tag, AlertCircle, CheckCircle2, Clock, Loader2 } from 'lucide-react'
+import { Plus, X, Calendar, User, Tag, AlertCircle, CheckCircle2, Clock, Loader2, ZoomIn, ZoomOut, Maximize2, Minimize2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const COLUMNS = [
-  { id: 'intake', label: '📨 Intake', color: 'bg-gray-500' },
-  { id: 'triage', label: '🔎 Triage', color: 'bg-blue-500' },
-  { id: 'backlog', label: '📋 Backlog', color: 'bg-purple-500' },
-  { id: 'ready', label: '🎯 Ready', color: 'bg-indigo-500' },
-  { id: 'in-progress', label: '🚧 In Progress', color: 'bg-yellow-500' },
-  { id: 'waiting', label: '⏳ Waiting', color: 'bg-orange-500' },
-  { id: 'review', label: '✅ Review', color: 'bg-pink-500' },
-  { id: 'done', label: '🏁 Done', color: 'bg-green-500' },
+  { id: 'intake', label: 'Intake', color: 'bg-gray-500', emoji: '📨' },
+  { id: 'triage', label: 'Triage', color: 'bg-blue-500', emoji: '🔎' },
+  { id: 'backlog', label: 'Backlog', color: 'bg-purple-500', emoji: '📋' },
+  { id: 'ready', label: 'Ready', color: 'bg-indigo-500', emoji: '🎯' },
+  { id: 'in-progress', label: 'In Progress', color: 'bg-yellow-500', emoji: '🚧' },
+  { id: 'waiting', label: 'Waiting', color: 'bg-orange-500', emoji: '⏳' },
+  { id: 'review', label: 'Review', color: 'bg-pink-500', emoji: '✅' },
+  { id: 'done', label: 'Done', color: 'bg-green-500', emoji: '🏁' },
 ]
 
 const PRIORITY_COLORS = {
-  P0: 'bg-red-500/20 text-red-400 border-red-500/30',
+  P0: 'bg-red-500/20 text-red border-red-500/30',
   P1: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
   P2: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
   P3: 'bg-green-500/20 text-green-400 border-green-500/30',
 }
 
-// Sortable Task Card Component
 function SortableTask({ task, onClick }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
   
@@ -42,43 +41,42 @@ function SortableTask({ task, onClick }) {
       {...attributes}
       {...listeners}
       onClick={() => onClick(task)}
-      className="bg-panel-strong border border-line rounded-xl p-4 hover:border-gold/50 transition group mb-3"
+      className="bg-panel-strong border border-line rounded-lg p-2 hover:border-gold/50 transition mb-2 shrink-0"
     >
-      <div className="flex items-start justify-between mb-2">
-        <span className={`px-2 py-0.5 text-xs font-bold rounded border ${PRIORITY_COLORS[task.priority]}`}>
+      <div className="flex items-center justify-between mb-1">
+        <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded border ${PRIORITY_COLORS[task.priority]}`}>
           {task.priority}
         </span>
         {task.approval_required && (
-          <span className="text-xs text-gold flex items-center gap-1">
-            <AlertCircle className="w-3 h-3" />
-            Approval
+          <AlertCircle className="w-3 h-3 text-gold" />
+        )}
+      </div>
+
+      <h4 className="font-semibold text-sm mb-1 leading-tight line-clamp-2">{task.title}</h4>
+      
+      {task.description && (
+        <p className="text-xs text-muted mb-1 line-clamp-2">{task.description}</p>
+      )}
+
+      <div className="flex items-center gap-2 text-[10px] text-muted mb-1">
+        {task.due_date && (
+          <span className="flex items-center gap-0.5">
+            <Calendar className="w-2.5 h-2.5" />
+            {new Date(task.due_date).toLocaleDateString('en', { month: 'short', day: 'numeric' })}
+          </span>
+        )}
+        {task.owner && (
+          <span className="flex items-center gap-0.5">
+            <User className="w-2.5 h-2.5" />
+            {task.owner}
           </span>
         )}
       </div>
 
-      <h3 className="font-semibold mb-2">{task.title}</h3>
-      
-      {task.description && (
-        <p className="text-sm text-muted mb-3 line-clamp-2">{task.description}</p>
-      )}
-
-      <div className="flex items-center gap-3 text-xs text-muted mb-3">
-        {task.due_date && (
-          <div className="flex items-center gap-1">
-            <Calendar className="w-3 h-3" />
-            {new Date(task.due_date).toLocaleDateString()}
-          </div>
-        )}
-        <div className="flex items-center gap-1">
-          <User className="w-3 h-3" />
-          {task.owner}
-        </div>
-      </div>
-
       {task.tags && task.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {task.tags.slice(0, 3).map((tag, i) => (
-            <span key={i} className="text-xs px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded">
+        <div className="flex flex-wrap gap-0.5">
+          {task.tags.slice(0, 2).map((tag, i) => (
+            <span key={i} className="text-[9px] px-1.5 py-0.5 bg-blue-500/10 text-blue-400 rounded">
               {tag}
             </span>
           ))}
@@ -94,6 +92,7 @@ export default function Kanban({}) {
   const [showNewTask, setShowNewTask] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
   const [activeTask, setActiveTask] = useState(null)
+  const [scale, setScale] = useState(1)
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
@@ -115,7 +114,6 @@ export default function Kanban({}) {
   useEffect(() => {
     fetchTasks()
 
-    // Supabase Realtime Subscription
     const channel = supabase
       .channel('tasks-realtime')
       .on(
@@ -150,7 +148,6 @@ export default function Kanban({}) {
       setTasks(data || [])
     } catch (error) {
       console.error('Error fetching tasks:', error)
-      // Fallback to sample data
       setTasks([
         { id: '1', title: 'Set up Supabase', description: 'Create project and run migration schema', priority: 'P0', status: 'done', owner: 'Chad', due_date: '2026-05-11', tags: ['infrastructure', 'database'], approval_required: false },
         { id: '2', title: 'Deploy to Vercel', description: 'Connect GitHub repository and configure environment variables', priority: 'P0', status: 'done', owner: 'Chad', due_date: '2026-05-11', tags: ['deployment', 'infrastructure'], approval_required: false },
@@ -185,7 +182,6 @@ export default function Kanban({}) {
     } catch (error) {
       console.error('Error creating task:', error)
       toast.error('Failed to create task', { id: loadingToast })
-      // For demo, add locally even if Supabase fails
       const localTask = {
         id: Date.now().toString(),
         ...newTask,
@@ -216,7 +212,6 @@ export default function Kanban({}) {
     } catch (error) {
       console.error('Error updating task:', error)
       toast.error('Failed to update task')
-      // Update locally even if Supabase fails
       setTasks(tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t))
     }
   }
@@ -233,7 +228,7 @@ export default function Kanban({}) {
 
     if (over && active.id !== over.id) {
       const task = tasks.find(t => t.id === active.id)
-      const newColumnId = over.id // over.id is the column id
+      const newColumnId = over.id
       
       if (task && task.status !== newColumnId) {
         updateTaskStatus(active.id, newColumnId)
@@ -245,73 +240,90 @@ export default function Kanban({}) {
     return tasks.filter(t => t.status === columnId)
   }
 
-  return (
-    <div className="min-h-screen">
-      {/* Sidebar */}
-<div className="min-h-screen p-8 lg:p-8">
-        <header className="mb-8 flex justify-between items-start">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Kanban Board</h1>
-            <p className="text-muted">Drag and drop tasks across workflow stages</p>
-          </div>
-          <button
-            onClick={() => setShowNewTask(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gold text-bg font-bold rounded-lg hover:opacity-90 transition"
-          >
-            <Plus className="w-5 h-5" />
-            New Task
-          </button>
-        </header>
+  const totalTasks = tasks.length
+  const inProgress = tasks.filter(t => t.status === 'in-progress').length
+  const waiting = tasks.filter(t => t.status === 'waiting').length
+  const done = tasks.filter(t => t.status === 'done').length
 
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          <div className="bg-panel border border-line rounded-xl p-4">
-            <div className="text-sm text-muted mb-1">Total Tasks</div>
-            <div className="text-2xl font-bold">{tasks.length}</div>
-          </div>
-          <div className="bg-panel border border-line rounded-xl p-4">
-            <div className="text-sm text-muted mb-1">In Progress</div>
-            <div className="text-2xl font-bold text-yellow-400">{tasks.filter(t => t.status === 'in-progress').length}</div>
-          </div>
-          <div className="bg-panel border border-line rounded-xl p-4">
-            <div className="text-sm text-muted mb-1">Waiting</div>
-            <div className="text-2xl font-bold text-orange-400">{tasks.filter(t => t.status === 'waiting').length}</div>
-          </div>
-          <div className="bg-panel border border-line rounded-xl p-4">
-            <div className="text-sm text-muted mb-1">Done</div>
-            <div className="text-2xl font-bold text-green-400">{tasks.filter(t => t.status === 'done').length}</div>
+  return (
+    <div className="h-screen flex flex-col">
+      {/* Compact Header Bar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-panel-strong border-b border-line">
+        <div className="flex items-center gap-4">
+          <h1 className="text-lg font-bold">Kanban</h1>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-muted">Total: <span className="text-white font-semibold">{totalTasks}</span></span>
+            <span className="text-muted">🚧 <span className="text-yellow-400 font-semibold">{inProgress}</span></span>
+            <span className="text-muted">⏳ <span className="text-orange-400 font-semibold">{waiting}</span></span>
+            <span className="text-muted">🏁 <span className="text-green-400 font-semibold">{done}</span></span>
           </div>
         </div>
+        
+        <div className="flex items-center gap-2">
+          {/* Zoom Controls */}
+          <div className="flex items-center gap-1 mr-2">
+            <button
+              onClick={() => setScale(Math.max(0.5, scale - 0.1))}
+              className="p-1.5 rounded hover:bg-line/20 transition text-muted"
+              title="Zoom out"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <span className="text-xs text-muted min-w-[3rem] text-center">{Math.round(scale * 100)}%</span>
+            <button
+              onClick={() => setScale(Math.min(1.5, scale + 0.1))}
+              className="p-1.5 rounded hover:bg-line/20 transition text-muted"
+              title="Zoom in"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setScale(1)}
+              className="p-1.5 rounded hover:bg-line/20 transition text-muted"
+              title="Fit to screen"
+            >
+              <Maximize2 className="w-4 h-4" />
+            </button>
+          </div>
 
-        {/* Kanban Board with Drag & Drop */}
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
+          <button
+            onClick={() => setShowNewTask(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gold text-bg font-bold text-sm rounded-lg hover:opacity-90 transition"
+          >
+            <Plus className="w-4 h-4" />
+            New
+          </button>
+        </div>
+      </div>
+
+      {/* Kanban Board */}
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <div 
+          className="flex-1 overflow-x-auto overflow-y-auto"
+          style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
         >
-          <div className="flex gap-4 overflow-x-auto pb-4">
+          <div className="flex gap-3 p-3 min-w-max">
             {COLUMNS.map((column) => {
               const columnTasks = getTasksByColumn(column.id)
               
               return (
                 <div
                   key={column.id}
-                  className="flex-shrink-0 w-96 bg-panel border border-line rounded-2xl"
+                  className="flex-shrink-0 w-56 bg-panel border border-line rounded-xl flex flex-col"
                 >
-                  {/* Column Header */}
-                  <div className="p-4 border-b border-line flex items-center justify-between sticky top-0 bg-panel rounded-t-2xl">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${column.color}`}></div>
-                      <span className="font-bold">{column.label}</span>
+                  {/* Compact Column Header */}
+                  <div className="p-2 border-b border-line flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <div className={`w-2 h-2 rounded-full ${column.color}`}></div>
+                      <span className="font-semibold text-xs">{column.emoji} {column.label}</span>
                     </div>
-                    <span className="text-xs text-muted bg-panel-strong px-2 py-1 rounded-full">
+                    <span className="text-[10px] text-muted bg-panel-strong px-1.5 py-0.5 rounded-full">
                       {columnTasks.length}
                     </span>
                   </div>
 
-                  {/* Drop Zone */}
-                  <div className="p-3 min-h-[500px]">
+                  {/* Task List */}
+                  <div className="flex-1 overflow-y-auto p-2 min-h-0">
                     <SortableContext
                       items={columnTasks.map(t => t.id)}
                       strategy={verticalListSortingStrategy}
@@ -326,8 +338,8 @@ export default function Kanban({}) {
                     </SortableContext>
 
                     {columnTasks.length === 0 && (
-                      <div className="text-center py-12 text-muted text-sm border-2 border-dashed border-line/50 rounded-xl">
-                        Drop tasks here
+                      <div className="text-center py-6 text-muted text-xs border-2 border-dashed border-line/50 rounded-lg">
+                        Drop here
                       </div>
                     )}
                   </div>
@@ -339,59 +351,59 @@ export default function Kanban({}) {
           {/* Drag Overlay */}
           <DragOverlay>
             {activeTask ? (
-              <div className="bg-panel-strong border-2 border-gold rounded-xl p-4 shadow-2xl rotate-3 max-w-xs">
-                <div className="flex items-start justify-between mb-2">
-                  <span className={`px-2 py-0.5 text-xs font-bold rounded border ${PRIORITY_COLORS[activeTask.priority]}`}>
+              <div className="bg-panel-strong border-2 border-gold rounded-lg p-3 shadow-2xl rotate-3 max-w-xs">
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded border ${PRIORITY_COLORS[activeTask.priority]}`}>
                     {activeTask.priority}
                   </span>
                 </div>
-                <h3 className="font-semibold">{activeTask.title}</h3>
+                <h4 className="font-semibold text-sm">{activeTask.title}</h4>
               </div>
             ) : null}
           </DragOverlay>
-        </DndContext>
-</div>
+        </div>
+      </div>
 
-      {/* New Task Modal */}
+      {/* New Task Modal - Compact */}
       {showNewTask && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-panel-strong border border-line rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Create New Task</h2>
-              <button onClick={() => setShowNewTask(false)} className="text-3xl text-muted hover:text-white">×</button>
+          <div className="bg-panel-strong border border-line rounded-2xl p-5 max-w-md w-full max-h-[85vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold">New Task</h2>
+              <button onClick={() => setShowNewTask(false)} className="text-2xl text-muted hover:text-white">×</button>
             </div>
             
-            <form onSubmit={createTask} className="space-y-4">
+            <form onSubmit={createTask} className="space-y-3">
               <div>
-                <label className="block text-sm font-semibold mb-2">Title *</label>
+                <label className="block text-xs font-semibold mb-1">Title *</label>
                 <input
                   type="text"
                   value={newTask.title}
                   onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                  className="w-full bg-panel border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
+                  className="w-full bg-panel border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold"
                   placeholder="What needs to be done?"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Description</label>
+                <label className="block text-xs font-semibold mb-1">Description</label>
                 <textarea
                   value={newTask.description}
                   onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                  className="w-full bg-panel border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
-                  rows="3"
+                  className="w-full bg-panel border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold resize-none"
+                  rows="2"
                   placeholder="Add details..."
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Priority</label>
+                  <label className="block text-xs font-semibold mb-1">Priority</label>
                   <select
                     value={newTask.priority}
                     onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-                    className="w-full bg-panel border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
+                    className="w-full bg-panel border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold"
                   >
                     <option value="P0">P0 - Critical</option>
                     <option value="P1">P1 - High</option>
@@ -401,51 +413,66 @@ export default function Kanban({}) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Owner</label>
+                  <label className="block text-xs font-semibold mb-1">Owner</label>
                   <input
                     type="text"
                     value={newTask.owner}
                     onChange={(e) => setNewTask({ ...newTask, owner: e.target.value })}
-                    className="w-full bg-panel border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
+                    className="w-full bg-panel border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold"
                     placeholder="Chad"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold mb-2">Due Date</label>
-                <input
-                  type="date"
-                  value={newTask.due_date}
-                  onChange={(e) => setNewTask({ ...newTask, due_date: e.target.value })}
-                  className="w-full bg-panel border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold mb-1">Due Date</label>
+                  <input
+                    type="date"
+                    value={newTask.due_date}
+                    onChange={(e) => setNewTask({ ...newTask, due_date: e.target.value })}
+                    className="w-full bg-panel border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold mb-1">Status</label>
+                  <select
+                    value={newTask.status}
+                    onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
+                    className="w-full bg-panel border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold"
+                  >
+                    {COLUMNS.map(col => (
+                      <option key={col.id} value={col.id}>{col.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Tags</label>
+                <label className="block text-xs font-semibold mb-1">Tags</label>
                 <input
                   type="text"
                   value={newTask.tags}
                   onChange={(e) => setNewTask({ ...newTask, tags: e.target.value })}
-                  className="w-full bg-panel border border-line rounded-lg px-4 py-3 focus:outline-none focus:border-gold"
-                  placeholder="comma-separated (e.g., urgent, feature, bug)"
+                  className="w-full bg-panel border border-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold"
+                  placeholder="comma-separated"
                 />
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowNewTask(false)}
-                  className="flex-1 px-4 py-3 border border-line rounded-lg hover:bg-line/20 transition"
+                  className="flex-1 px-3 py-2 border border-line rounded-lg hover:bg-line/20 transition text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 bg-gold text-bg font-bold rounded-lg hover:opacity-90 transition"
+                  className="flex-1 px-3 py-2 bg-gold text-bg font-bold rounded-lg hover:opacity-90 transition text-sm"
                 >
-                  Create Task
+                  Create
                 </button>
               </div>
             </form>
@@ -453,117 +480,74 @@ export default function Kanban({}) {
         </div>
       )}
 
-      {/* Task Detail Modal */}
+      {/* Task Detail Modal - Compact */}
       {selectedTask && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-panel-strong border border-line rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className={`px-3 py-1 text-sm font-bold rounded border ${PRIORITY_COLORS[selectedTask.priority]}`}>
+          <div className="bg-panel-strong border border-line rounded-2xl p-5 max-w-lg w-full max-h-[85vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded border ${PRIORITY_COLORS[selectedTask.priority]}`}>
                     {selectedTask.priority}
                   </span>
                   {selectedTask.approval_required && (
-                    <span className="text-xs text-gold flex items-center gap-1 px-2 py-1 bg-gold/10 rounded">
+                    <span className="text-xs text-gold flex items-center gap-1 px-2 py-0.5 bg-gold/10 rounded">
                       <AlertCircle className="w-3 h-3" />
-                      Requires Approval
+                      Approval
                     </span>
                   )}
                 </div>
-                <h2 className="text-2xl font-bold">{selectedTask.title}</h2>
+                <h2 className="text-lg font-bold">{selectedTask.title}</h2>
               </div>
-              <button onClick={() => setSelectedTask(null)} className="text-3xl text-muted hover:text-white">×</button>
+              <button onClick={() => setSelectedTask(null)} className="text-2xl text-muted hover:text-white">×</button>
             </div>
 
-            <div className="space-y-6">
-              {/* Description */}
-              <div>
-                <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                  <Tag className="w-4 h-4" />
-                  Description
-                </h3>
-                <p className="text-muted leading-relaxed">
-                  {selectedTask.description || 'No description provided.'}
-                </p>
-              </div>
+            <div className="space-y-4">
+              {selectedTask.description && (
+                <div>
+                  <h3 className="text-xs font-semibold mb-1 flex items-center gap-1.5">
+                    <Tag className="w-3 h-3" />
+                    Description
+                  </h3>
+                  <p className="text-sm text-muted">{selectedTask.description}</p>
+                </div>
+              )}
 
-              {/* Status */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Status
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {COLUMNS.map((col) => (
-                    <button
-                      key={col.id}
-                      onClick={() => updateTaskStatus(selectedTask.id, col.id)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        selectedTask.status === col.id
-                          ? 'bg-gold text-bg'
-                          : 'bg-panel border border-line hover:border-gold/50'
-                      }`}
-                    >
-                      {col.label.split(' ').slice(1).join(' ')}
-                    </button>
-                  ))}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <h3 className="text-xs font-semibold mb-1">Status</h3>
+                  <select
+                    value={selectedTask.status}
+                    onChange={(e) => updateTaskStatus(selectedTask.id, e.target.value)}
+                    className="w-full bg-panel border border-line rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-gold"
+                  >
+                    {COLUMNS.map(col => (
+                      <option key={col.id} value={col.id}>{col.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <h3 className="text-xs font-semibold mb-1">Owner</h3>
+                  <p className="text-sm">{selectedTask.owner}</p>
                 </div>
               </div>
 
-              {/* Meta Info */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-panel rounded-xl p-4 border border-line">
-                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
-                    <User className="w-4 h-4" />
-                    Owner
-                  </div>
-                  <div className="font-semibold">{selectedTask.owner}</div>
-                </div>
-
-                <div className="bg-panel rounded-xl p-4 border border-line">
-                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
-                    <Calendar className="w-4 h-4" />
-                    Due Date
-                  </div>
-                  <div className="font-semibold">
-                    {selectedTask.due_date ? new Date(selectedTask.due_date).toLocaleDateString() : 'Not set'}
-                  </div>
-                </div>
-
-                <div className="bg-panel rounded-xl p-4 border border-line">
-                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
-                    <Clock className="w-4 h-4" />
-                    Created
-                  </div>
-                  <div className="font-semibold">
-                    {selectedTask.created_at ? new Date(selectedTask.created_at).toLocaleDateString() : 'Recently'}
-                  </div>
-                </div>
-
-                <div className="bg-panel rounded-xl p-4 border border-line">
-                  <div className="flex items-center gap-2 text-sm text-muted mb-1">
-                    <Tag className="w-4 h-4" />
-                    Tags
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {selectedTask.tags && selectedTask.tags.length > 0 ? (
-                      selectedTask.tags.map((tag, i) => (
-                        <span key={i} className="text-xs px-2 py-1 bg-blue-500/10 text-blue-400 rounded">
-                          {tag}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-muted">No tags</span>
-                    )}
-                  </div>
-                </div>
+              <div className="flex flex-wrap gap-1">
+                {selectedTask.tags && selectedTask.tags.length > 0 ? (
+                  selectedTask.tags.map((tag, i) => (
+                    <span key={i} className="text-xs px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded">
+                      {tag}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-muted">No tags</span>
+                )}
               </div>
 
-              {/* Actions */}
-              <div className="flex gap-4 pt-4 border-t border-line">
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setSelectedTask(null)}
-                  className="flex-1 px-4 py-3 border border-line rounded-lg hover:bg-line/20 transition"
+                  className="flex-1 px-3 py-2 border border-line rounded-lg hover:bg-line/20 transition text-sm"
                 >
                   Close
                 </button>
