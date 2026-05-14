@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { Trophy, Clock, DollarSign, Loader2, Plus, Edit, Trash2 } from 'lucide-react'
@@ -10,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import Input from '../components/Input'
 import { getCurrentUser, canCreate, canDelete } from '../lib/rbac'
 
-export default function Ventures({ onLogout }) {
+export default function Ventures({}) {
   const [ventures, setVentures] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedVenture, setSelectedVenture] = useState(null)
@@ -43,27 +42,7 @@ export default function Ventures({ onLogout }) {
 
   return (
     <div className="min-h-screen">
-      <aside className="fixed left-0 top-0 h-full w-56 bg-bg/80 backdrop-blur-xl border-r border-line p-4">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="text-3xl">💵</div>
-          <div>
-            <div className="font-bold">Chad OS</div>
-            <div className="text-xs text-muted">Management System</div>
-          </div>
-        </div>
-
-        <nav className="space-y-1">
-          <Link to="/" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">📋 Dashboard</Link>
-          <Link to="/finances" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">💰 Finances</Link>
-          <Link to="/ventures" className="block px-4 py-2 rounded-lg bg-gold/10 text-white font-medium">🚀 Ventures</Link>
-          <Link to="/agents" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">🤖 Agents</Link>
-          <Link to="/kanban" className="block px-4 py-2 rounded-lg hover:bg-gold/10 transition">✅ Kanban</Link>
-        </nav>
-
-        <Button onClick={onLogout} className="absolute bottom-4 left-4 right-4 border border-line hover:bg-line/20 transition text-sm">Log Out</Button>
-      </aside>
-
-      <main className="ml-56 p-8">
+<div className="min-h-screen p-8 lg:p-8">
         <header className="mb-8 flex justify-between items-end">
           <div>
             <h1 className="text-4xl font-bold mb-2">Venture Pipeline</h1>
@@ -257,7 +236,7 @@ export default function Ventures({ onLogout }) {
             </div>
           )}
         </Modal>
-      </main>
+</div>
     </div>
   )
 }
